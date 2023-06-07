@@ -12,7 +12,6 @@ void main() {
     title: 'Fireworks',
     theme: ThemeData(
       primaryColor: Colors.black,
-      accentColor: Colors.yellowAccent,
       textSelectionTheme: TextSelectionThemeData(
         cursorColor: Colors.black,
         selectionColor: Colors.yellow,
@@ -34,7 +33,8 @@ class _Fireworks extends StatefulWidget {
 
 class _FireworksState extends State<_Fireworks>
     with SingleTickerProviderStateMixin {
-  late final _controller = FireworkController(vsync: this)..start();
+  late final _controller = FireworkController(vsync: this, withStars: false)
+    ..start();
   late final _titleEditingController = TextEditingController(
     text: _controller.title,
   );

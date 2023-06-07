@@ -1,10 +1,9 @@
 import 'dart:math';
 
 import 'package:fireworks/src/foundation/controller.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/rendering.dart';
-import 'package:google_fonts/google_fonts.dart';
+import 'package:flutter/foundation.dart' show kIsWeb;
 
 class RenderFireworks extends RenderBox {
   RenderFireworks({
@@ -77,7 +76,7 @@ class RenderFireworks extends RenderBox {
     _titleStrokePainter = TextPainter(
       text: TextSpan(
         text: controller.title,
-        style: GoogleFonts.inter(
+        style: TextStyle(
           fontSize: fontSize,
           fontWeight: FontWeight.w900,
           height: 1,
@@ -95,7 +94,7 @@ class RenderFireworks extends RenderBox {
     _titlePainter = TextPainter(
       text: TextSpan(
         text: controller.title,
-        style: GoogleFonts.inter(
+        style: TextStyle(
           fontSize: fontSize,
           fontWeight: FontWeight.w900,
           height: 1,
@@ -129,16 +128,17 @@ class RenderFireworks extends RenderBox {
       ..clipRect(offset & size)
       ..translate(offset.dx, offset.dy);
 
-    _drawBackground(canvas);
+    if (_controller.withSky) _drawBackground(canvas);
     _drawFireworks(canvas);
     _drawTitle(canvas);
-    _drawStars(canvas);
+    if (_controller.withStars) _drawStars(canvas);
 
     canvas.restore();
   }
 
   void _drawBackground(Canvas canvas) {
-    canvas.drawPaint(Paint()..color = const Color(0xff000000));
+    canvas.drawPaint(
+        Paint()..color = _controller.skyColor ?? const Color(0xff000000));
   }
 
   void _drawFireworks(Canvas canvas) {
@@ -224,7 +224,7 @@ class RenderFireworks extends RenderBox {
           random.nextDouble() * size.height,
         ),
         size.shortestSide / 4e2 * pow(random.nextDouble().clamp(1 / 5, 1), 2),
-        Paint()..color = Color(0xffffffff),
+        Paint()..color = _controller.starColor ?? Color(0xffffffff),
       );
     }
   }

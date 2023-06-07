@@ -15,11 +15,21 @@ import 'package:flutter/scheduler.dart';
 class FireworkController implements Listenable {
   FireworkController({
     required this.vsync,
+    this.title = '',
+    this.autoLaunchDuration = const Duration(seconds: 1),
+    double particleSize = 3.5,
+    this.rocketSpawnTimeout = const Duration(milliseconds: 420),
+    this.explosionParticleCount = 160,
+    this.withSky = true,
+    this.skyColor,
+    this.withStars = true,
+    this.starColor,
   })  : rockets = [],
         particles = [],
         _listeners = [],
-        _title = DateTime.now().add(Duration(days: 1)).year.toString(),
-        _random = Random();
+        _random = Random() {
+    this.particleSize = particleSize;
+  }
 
   /// Provider for the ticker that updates the controller.
   final TickerProvider vsync;
@@ -37,20 +47,7 @@ class FireworkController implements Listenable {
 
   /// The title of the fireworks animation that is displayed in the center
   /// of the animation.
-  ///
-  /// By default shows the year 65 days from now.
-  ///
-  /// Set this to an empty string in order to hide the title.
-  String get title => _title;
-  String _title;
-
-  set title(String value) {
-    if (value == title) return;
-
-    // No need to notify about this change as _update is constantly being
-    // called anyway.
-    _title = value;
-  }
+  String title;
 
   final Random _random;
 
@@ -103,7 +100,7 @@ class FireworkController implements Listenable {
   /// Launches the rockets at random positions.
   ///
   /// Set this to [Duration.zero] to not launch any rockets automatically.
-  Duration autoLaunchDuration = Duration(seconds: 1);
+  Duration autoLaunchDuration;
 
   /// The particle size for both the firework rockets and particles.
   ///
@@ -111,7 +108,7 @@ class FireworkController implements Listenable {
   /// particles while the stroke width of the rocket is one less.
   /// Also note that this will be clamped to a minimum of 0.
   double get particleSize => _particleSize;
-  double _particleSize = 3.5;
+  late double _particleSize;
 
   set particleSize(double value) {
     _particleSize = max(1, value);
@@ -193,7 +190,7 @@ class FireworkController implements Listenable {
   /// will be spawned.
   ///
   /// Set this to [Duration.zero] if you want to forbid manual spawns.
-  Duration rocketSpawnTimeout = Duration(milliseconds: 420);
+  Duration rocketSpawnTimeout;
 
   /// Launches a new [FireworkRocket] with the given [target].
   ///
@@ -221,7 +218,7 @@ class FireworkController implements Listenable {
   }
 
   /// How many particles will be spawned when a rocket explodes.
-  int explosionParticleCount = 160;
+  int explosionParticleCount;
 
   void _createExplosion(FireworkRocket rocket) {
     for (var i = 0; i < explosionParticleCount; i++) {
@@ -233,4 +230,16 @@ class FireworkController implements Listenable {
       ));
     }
   }
+
+  /// The color of sky
+  Color? skyColor;
+
+  /// Render with sky
+  bool withSky;
+
+  /// The color of stars
+  Color? starColor;
+
+  /// Render with stars
+  bool withStars;
 }
