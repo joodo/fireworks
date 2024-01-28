@@ -15,7 +15,6 @@ import 'package:flutter/scheduler.dart';
 class FireworkController implements Listenable {
   FireworkController({
     required this.vsync,
-    this.title = '',
     this.autoLaunchDuration = const Duration(seconds: 1),
     double particleSize = 3.5,
     this.rocketSpawnTimeout = const Duration(milliseconds: 420),
@@ -44,10 +43,6 @@ class FireworkController implements Listenable {
   ///
   /// This has to be set by the renderer.
   Size windowSize = Size.zero;
-
-  /// The title of the fireworks animation that is displayed in the center
-  /// of the animation.
-  String title;
 
   final Random _random;
 

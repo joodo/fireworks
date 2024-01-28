@@ -3,13 +3,11 @@ import 'dart:math';
 import 'package:fireworks/src/foundation/controller.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/rendering.dart';
-import 'package:flutter/foundation.dart' show kIsWeb;
 
 class RenderFireworks extends RenderBox {
   RenderFireworks({
     required FireworkController controller,
-  })  : _controller = controller,
-        _previousTitle = controller.title;
+  }) : _controller = controller;
 
   /// The controller that manages the fireworks and tells the render box what
   /// and when to paint.
@@ -41,14 +39,7 @@ class RenderFireworks extends RenderBox {
     super.detach();
   }
 
-  String _previousTitle;
-
   void _handleControllerUpdate() {
-    if (_previousTitle != controller.title) {
-      _previousTitle = controller.title;
-      // We need to relayout because the text painters need to change.
-      markNeedsLayout();
-    }
     markNeedsPaint();
   }
 
@@ -65,43 +56,6 @@ class RenderFireworks extends RenderBox {
   @override
   Size computeDryLayout(BoxConstraints constraints) {
     return constraints.biggest;
-  }
-
-  late TextPainter _titleStrokePainter, _titlePainter;
-
-  @override
-  void performLayout() {
-    final fontSize = constraints.maxWidth / controller.title.length * 5 / 4;
-
-    _titleStrokePainter = TextPainter(
-      text: TextSpan(
-        text: controller.title,
-        style: TextStyle(
-          fontSize: fontSize,
-          fontWeight: FontWeight.w900,
-          height: 1,
-          color: null,
-          foreground: Paint()
-            // On web, the stroke does not seem to work properly.
-            ..style = kIsWeb ? PaintingStyle.fill : PaintingStyle.stroke
-            ..strokeWidth = 9
-            ..strokeCap = StrokeCap.round
-            ..color = const Color(0xffffffff),
-        ),
-      ),
-      textDirection: TextDirection.ltr,
-    )..layout(maxWidth: constraints.biggest.width);
-    _titlePainter = TextPainter(
-      text: TextSpan(
-        text: controller.title,
-        style: TextStyle(
-          fontSize: fontSize,
-          fontWeight: FontWeight.w900,
-          height: 1,
-        ),
-      ),
-      textDirection: TextDirection.ltr,
-    )..layout(maxWidth: constraints.biggest.width);
   }
 
   @override
@@ -130,7 +84,6 @@ class RenderFireworks extends RenderBox {
 
     if (_controller.withSky) _drawBackground(canvas);
     _drawFireworks(canvas);
-    _drawTitle(canvas);
     if (_controller.withStars) _drawStars(canvas);
 
     canvas.restore();
@@ -183,36 +136,6 @@ class RenderFireworks extends RenderBox {
           ..style = PaintingStyle.stroke,
       );
     }
-  }
-
-  void _drawTitle(Canvas canvas) {
-    if (_controller.title.isEmpty) return;
-
-    canvas.saveLayer(
-      Offset.zero & size,
-      Paint()..blendMode = BlendMode.difference,
-    );
-    _titleStrokePainter.paint(
-      canvas,
-      Offset(
-        (size.width - _titleStrokePainter.width) / 2,
-        (size.height - _titleStrokePainter.height) / 2,
-      ),
-    );
-    canvas.restore();
-
-    canvas.saveLayer(
-      Offset.zero & size,
-      Paint()..blendMode = BlendMode.colorDodge,
-    );
-    _titlePainter.paint(
-      canvas,
-      Offset(
-        (size.width - _titleStrokePainter.width) / 2,
-        (size.height - _titleStrokePainter.height) / 2,
-      ),
-    );
-    canvas.restore();
   }
 
   void _drawStars(Canvas canvas) {

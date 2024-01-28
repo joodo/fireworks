@@ -35,9 +35,6 @@ class _FireworksState extends State<_Fireworks>
     with SingleTickerProviderStateMixin {
   late final _controller = FireworkController(vsync: this, withStars: false)
     ..start();
-  late final _titleEditingController = TextEditingController(
-    text: _controller.title,
-  );
   late final _autoLaunchEditingController = TextEditingController(
     text: _controller.autoLaunchDuration.inMilliseconds.toString(),
   );
@@ -56,7 +53,6 @@ class _FireworksState extends State<_Fireworks>
   @override
   void dispose() {
     _controller.dispose();
-    _titleEditingController.dispose();
     _autoLaunchEditingController.dispose();
     _spawnTimeoutEditingController.dispose();
     _particleCountEditingController.dispose();
@@ -157,13 +153,6 @@ class _FireworksState extends State<_Fireworks>
                               ),
                               const Spacer(
                                 flex: 2,
-                              ),
-                              _ConfigurationTextField(
-                                controller: _titleEditingController,
-                                helperText: 'Title text (empty for no title)',
-                                onChanged: (value) {
-                                  _controller.title = value;
-                                },
                               ),
                               _ConfigurationTextField(
                                 controller: _autoLaunchEditingController,

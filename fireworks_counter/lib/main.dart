@@ -57,8 +57,7 @@ class _MyHomePageState extends State<MyHomePage>
   late final FireworkController _controller = FireworkController(vsync: this)
     ..start()
     ..autoLaunchDuration = Duration.zero
-    ..rocketSpawnTimeout = Duration.zero
-    ..title = '';
+    ..rocketSpawnTimeout = Duration.zero;
   final _random = Random();
 
   void _incrementCounter() {
