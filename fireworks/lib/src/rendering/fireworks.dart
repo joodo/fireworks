@@ -104,8 +104,8 @@ class RenderFireworks extends RenderBox {
       canvas.drawPath(
         Path()
           ..moveTo(
-            rocket.trailPoints.last.x,
-            rocket.trailPoints.last.y,
+            rocket.oldestTrailPoint.x,
+            rocket.oldestTrailPoint.y,
           )
           ..lineTo(
             rocket.position.x,
@@ -119,8 +119,8 @@ class RenderFireworks extends RenderBox {
       canvas.drawPath(
         Path()
           ..moveTo(
-            particle.trailPoints.last.x,
-            particle.trailPoints.last.y,
+            particle.oldestTrailPoint.x,
+            particle.oldestTrailPoint.y,
           )
           ..lineTo(
             particle.position.x,

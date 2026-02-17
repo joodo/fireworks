@@ -14,10 +14,8 @@ abstract class FireworkObjectWithTrail {
     required this.position,
     required this.size,
   })  : assert(size >= 0),
-        trailPoints = [
-          // Fill the trail with the starting position initially.
-          for (var i = 0; i < trailCount; i++) position,
-        ];
+        _trailIndex = 0,
+        trailPoints = List.filled(trailCount, position);
 
   /// [Random] instance used for generating random numbers in the firework
   /// object.
@@ -30,6 +28,10 @@ abstract class FireworkObjectWithTrail {
   final int trailCount;
 
   final List<Point<double>> trailPoints;
+  int _trailIndex;
+
+  /// Returns the oldest point in the trail (useful for drawing trail lines)
+  Point<double> get oldestTrailPoint => trailPoints[_trailIndex];
 
   /// The particle size in logical pixels.
   ///
@@ -39,7 +41,7 @@ abstract class FireworkObjectWithTrail {
   /// Updates the state of the object.
   @mustCallSuper
   void update() {
-    trailPoints.removeLast();
-    trailPoints.insert(0, position);
+    trailPoints[_trailIndex] = position;
+    _trailIndex = (_trailIndex + 1) % trailCount;
   }
 }
