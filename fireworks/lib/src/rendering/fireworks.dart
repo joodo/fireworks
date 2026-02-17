@@ -101,7 +101,6 @@ class RenderFireworks extends RenderBox {
             HSVColor.fromAHSV(1, rocket.hue, 1, rocket.brightness).toColor()
         ..strokeWidth = rocket.size
         ..style = PaintingStyle.stroke;
-
       canvas.drawPath(
         Path()
           ..moveTo(
