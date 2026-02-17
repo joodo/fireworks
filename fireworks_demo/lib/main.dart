@@ -21,6 +21,7 @@ void main() {
     home: Scaffold(
       body: _Fireworks(),
     ),
+    showPerformanceOverlay: true,
   ));
 }
 
@@ -33,7 +34,13 @@ class _Fireworks extends StatefulWidget {
 
 class _FireworksState extends State<_Fireworks>
     with SingleTickerProviderStateMixin {
-  late final _controller = FireworkController(vsync: this, withStars: false)
+  late final _controller = FireworkController(
+      vsync: this,
+      withStars: false,
+      autoLaunchDuration: Duration(milliseconds: 100),
+      rocketSpawnTimeout: Duration.zero,
+      explosionParticleCount: 600,
+      particleSize: 3)
     ..start();
   late final _autoLaunchEditingController = TextEditingController(
     text: _controller.autoLaunchDuration.inMilliseconds.toString(),

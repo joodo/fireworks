@@ -2,6 +2,7 @@ import 'dart:math';
 
 import 'package:fireworks/src/foundation/object.dart';
 import 'package:fireworks/src/foundation/particle.dart';
+import 'package:flutter/rendering.dart';
 
 /// The part of a firework that handles the launch path.
 ///
@@ -13,17 +14,21 @@ class FireworkRocket extends FireworkObjectWithTrail {
     required Random random,
     required this.start,
     required this.target,
-    required this.hue,
+    required double hue,
     required double size,
   })  : targetDistance = target.distanceTo(start),
         angle = atan2(target.y - start.y, target.x - start.x),
-        brightness = .5 + random.nextDouble() * .2,
+        baseColor =
+            HSVColor.fromAHSV(1.0, hue, 1.0, .5 + random.nextDouble() * .2)
+                .toColor(),
         super(
           trailCount: 2,
           position: start,
           random: random,
           size: size,
         );
+
+  final Color baseColor;
 
   final Point<double> start;
   final Point<double> target;
@@ -34,9 +39,6 @@ class FireworkRocket extends FireworkObjectWithTrail {
 
   double velocity = 1;
   final double acceleration = 1.025;
-
-  final double hue;
-  final double brightness;
 
   @override
   void update() {

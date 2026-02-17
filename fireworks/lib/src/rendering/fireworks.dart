@@ -97,8 +97,7 @@ class RenderFireworks extends RenderBox {
   void _drawFireworks(Canvas canvas) {
     for (final rocket in controller.rockets) {
       final paint = Paint()
-        ..color =
-            HSVColor.fromAHSV(1, rocket.hue, 1, rocket.brightness).toColor()
+        ..color = rocket.baseColor
         ..strokeWidth = rocket.size
         ..style = PaintingStyle.stroke;
       canvas.drawPath(
@@ -127,9 +126,7 @@ class RenderFireworks extends RenderBox {
             particle.position.y,
           ),
         Paint()
-          ..color = HSVColor.fromAHSV(
-                  particle.alpha, particle.hue % 360, 1, particle.brightness)
-              .toColor()
+          ..color = particle.baseColor.withAlpha((particle.alpha * 255).toInt())
           ..blendMode = BlendMode.screen
           ..strokeWidth = particle.size
           ..style = PaintingStyle.stroke,

@@ -4,6 +4,7 @@ import 'dart:ui';
 import 'package:fireworks/src/foundation/particle.dart';
 import 'package:fireworks/src/foundation/rocket.dart';
 import 'package:flutter/foundation.dart';
+import 'package:flutter/rendering.dart' show HSLColor;
 import 'package:flutter/scheduler.dart';
 
 /// Class managing a whole firework show.
@@ -27,6 +28,7 @@ class FireworkController extends ChangeNotifier {
         particles = [],
         _random = Random() {
     this.particleSize = particleSize;
+    _generateParticleSprite();
   }
 
   /// Provider for the ticker that updates the controller.
@@ -68,6 +70,7 @@ class FireworkController extends ChangeNotifier {
   @override
   void dispose() {
     _ticker.dispose();
+    particleSprite?.dispose();
     super.dispose();
   }
 
@@ -102,6 +105,27 @@ class FireworkController extends ChangeNotifier {
   FireworkRocket? _rocketToSpawn;
   Duration _lastRocketSpawn = Duration.zero;
 
+  // --- Atlas Support ---
+  Image? particleSprite;
+
+  /// Generates a simple circular gradient sprite for drawAtlas.
+  Future<void> _generateParticleSprite() async {
+    final recorder = PictureRecorder();
+    final canvas = Canvas(recorder);
+    final size = particleSize * 2;
+
+    final paint = Paint()
+      ..shader = Gradient.radial(
+        Offset(particleSize, particleSize),
+        particleSize,
+        [const Color(0xffffffff), const Color(0x00ffffff)],
+      );
+
+    canvas.drawCircle(Offset(particleSize, particleSize), particleSize, paint);
+    final picture = recorder.endRecording();
+    particleSprite = await picture.toImage(size.toInt(), size.toInt());
+  }
+
   void _update(Duration elapsedDuration) {
     if (windowSize == Size.zero) {
       // We need to wait until we have the size.
@@ -111,6 +135,7 @@ class FireworkController extends ChangeNotifier {
     _globalHue += _random.nextDouble() * 360;
     _globalHue %= 360;
 
+    // Auto-launch logic
     if (autoLaunchDuration != Duration.zero &&
         elapsedDuration - _lastAutoLaunch >= autoLaunchDuration) {
       _lastAutoLaunch = elapsedDuration;
@@ -129,6 +154,7 @@ class FireworkController extends ChangeNotifier {
       ));
     }
 
+    // Manual spawn logic
     if (_rocketToSpawn != null &&
         rocketSpawnTimeout != Duration.zero &&
         elapsedDuration - _lastRocketSpawn >= rocketSpawnTimeout) {
@@ -137,6 +163,7 @@ class FireworkController extends ChangeNotifier {
       _lastRocketSpawn = elapsedDuration;
     }
 
+    // Update objects
     for (final rocket in rockets) {
       rocket.update();
     }
@@ -192,11 +219,12 @@ class FireworkController extends ChangeNotifier {
   int explosionParticleCount;
 
   void _createExplosion(FireworkRocket rocket) {
+    final hue = HSLColor.fromColor(rocket.baseColor).hue;
     for (var i = 0; i < explosionParticleCount; i++) {
       particles.add(FireworkParticle(
         random: _random,
         position: rocket.position,
-        hueBaseValue: rocket.hue,
+        hueBaseValue: hue,
         size: particleSize,
       ));
     }
