@@ -39,8 +39,7 @@ class _FireworksState extends State<_Fireworks>
       withStars: false,
       autoLaunchDuration: Duration(milliseconds: 100),
       rocketSpawnTimeout: Duration.zero,
-      explosionParticleCount: 600,
-      particleSize: 3)
+      explosionParticleCount: 600)
     ..start();
   late final _autoLaunchEditingController = TextEditingController(
     text: _controller.autoLaunchDuration.inMilliseconds.toString(),

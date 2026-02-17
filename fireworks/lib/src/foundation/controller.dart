@@ -112,16 +112,17 @@ class FireworkController extends ChangeNotifier {
   Future<void> _generateParticleSprite() async {
     final recorder = PictureRecorder();
     final canvas = Canvas(recorder);
-    final size = particleSize * 2;
+    final drawSize = particleSize * 2;
+    final size = drawSize * 2;
 
     final paint = Paint()
       ..shader = Gradient.radial(
-        Offset(particleSize, particleSize),
-        particleSize,
+        Offset(drawSize, drawSize),
+        drawSize,
         [const Color(0xffffffff), const Color(0x00ffffff)],
       );
 
-    canvas.drawCircle(Offset(particleSize, particleSize), particleSize, paint);
+    canvas.drawCircle(Offset(drawSize, drawSize), drawSize, paint);
     final picture = recorder.endRecording();
     particleSprite = await picture.toImage(size.toInt(), size.toInt());
     notifyListeners();

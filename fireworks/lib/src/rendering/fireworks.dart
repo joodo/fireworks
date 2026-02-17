@@ -155,7 +155,7 @@ class RenderFireworks extends RenderBox {
       _transformBuffer.buffer.asFloat32List(0, count * 4),
       _rectBuffer.buffer.asFloat32List(0, count * 4),
       _colorBuffer.buffer.asInt32List(0, count),
-      BlendMode.screen,
+      BlendMode.modulate,
       null,
       Paint(),
     );

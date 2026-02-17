@@ -20,7 +20,7 @@ class FireworkParticle extends FireworkObjectWithTrail {
                 1,
                 .5 + random.nextDouble() * .3)
             .toColor(),
-        alphaDecay = random.nextDouble() * .007 + .013,
+        alphaDecay = random.nextDouble() * .01 + .013,
         super(
           trailCount: size.toInt() * 2,
           position: position,
