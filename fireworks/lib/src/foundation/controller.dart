@@ -12,7 +12,7 @@ import 'package:flutter/scheduler.dart';
 /// ticker created by the given [vsync]).
 ///
 /// It spawns [FireworkRocket]s and creates [FireworkParticle] explosions.
-class FireworkController implements Listenable {
+class FireworkController extends ChangeNotifier {
   FireworkController({
     required this.vsync,
     this.autoLaunchDuration = const Duration(seconds: 1),
@@ -25,7 +25,6 @@ class FireworkController implements Listenable {
     this.starColor,
   })  : rockets = [],
         particles = [],
-        _listeners = [],
         _random = Random() {
     this.particleSize = particleSize;
   }
@@ -66,25 +65,10 @@ class FireworkController implements Listenable {
     _ticker = vsync.createTicker(_update)..start();
   }
 
-  final List<VoidCallback> _listeners;
-
   @override
-  void addListener(listener) {
-    assert(!_listeners.contains(listener));
-
-    _listeners.add(listener);
-  }
-
-  @override
-  void removeListener(listener) {
-    assert(_listeners.contains(listener));
-
-    _listeners.remove(listener);
-  }
-
   void dispose() {
-    _listeners.clear();
     _ticker.dispose();
+    super.dispose();
   }
 
   Duration _lastAutoLaunch = Duration.zero;
@@ -170,15 +154,7 @@ class FireworkController implements Listenable {
     });
     particles.removeWhere((element) => element.alpha <= 0);
 
-    // Notify listeners.
-    // The copy of the list and the condition prevent
-    // ConcurrentModificationError's, in case a listener removes itself
-    // or another listener.
-    // See https://stackoverflow.com/q/62417999/6509751.
-    for (final listener in List.of(_listeners)) {
-      if (!_listeners.contains(listener)) continue;
-      listener.call();
-    }
+    notifyListeners();
   }
 
   /// The duration that has to elapse before the rocket added by [spawnRocket]
