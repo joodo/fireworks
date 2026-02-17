@@ -124,6 +124,7 @@ class FireworkController extends ChangeNotifier {
     canvas.drawCircle(Offset(particleSize, particleSize), particleSize, paint);
     final picture = recorder.endRecording();
     particleSprite = await picture.toImage(size.toInt(), size.toInt());
+    notifyListeners();
   }
 
   void _update(Duration elapsedDuration) {
